@@ -1,11 +1,11 @@
--- In this assignment, you'll be building the domain model, database 
+-- In this assignment, you'll be building the domain model, database
 -- structure, and data for "KMDB" (the Kellogg Movie Database).
--- The end product will be a report that prints the movies and the 
+-- The end product will be a report that prints the movies and the
 -- top-billed cast for each movie in the database.
 
 -- Requirements/assumptions
 --
--- - The database will have three movies in it to start – the three films
+-- - The database will have three movies in it to start – the three films
 --   that make up Christopher Nolan's Batman trilogy.
 -- - Movie data includes the movie title, year released, MPAA rating,
 --   and studio.
@@ -30,7 +30,7 @@
 --   to an app and typically does not have a corresponding database table.
 
 -- Deliverables
--- 
+--
 -- There are five deliverables for this assignment, all delivered as part of
 -- this repository and submitted via GitHub and Canvas:
 --
@@ -49,13 +49,13 @@
 -- - Draw an ERD (entity relationship diagram) with and add it as a file
 --   named "erd" (any image file extension type is acceptable).
 -- - Think about how the domain model needs to reflect the
---   "real world" entities and the relationships with each other. 
---   Hint #1: It's not just a single table that contains everything in the 
+--   "real world" entities and the relationships with each other.
+--   Hint #1: It's not just a single table that contains everything in the
 --   expected output. There are multiple real world entities and
 --   relationships including at least one many-to-many relationship.
---   Hint #2: Do NOT name one of your models/tables “cast” or “casts”; this 
---   is a reserved word in sqlite and will break your database! Instead, 
---   think of a better word to describe this concept; i.e. the relationship 
+--   Hint #2: Do NOT name one of your models/tables "cast" or "casts"; this
+--   is a reserved word in sqlite and will break your database! Instead,
+--   think of a better word to describe this concept; i.e. the relationship
 --   between an actor and the movie in which they act.
 -- 2. Execution of the domain model (CREATE TABLE) - 4 points
 -- - Follow best practices for table and column names
@@ -79,12 +79,12 @@
 --   Any concern should be raised with faculty prior to assignment due date.
 
 -- Submission
--- 
+--
 -- - "Use this template" to create a brand-new "hw1" repository in your
 --   personal GitHub account, e.g. https://github.com/<USERNAME>/hw1
 -- - Do the assignment, committing and syncing often
 -- - When done, commit and sync a final time, before submitting the GitHub
---   URL for the finished "hw1" repository as the "Website URL" for the 
+--   URL for the finished "hw1" repository as the "Website URL" for the
 --   Homework 1 assignment in Canvas
 
 -- Successful sample output is as shown:
@@ -94,29 +94,106 @@
 .headers off
 
 -- Drop existing tables, so you'll start fresh each time this script is run.
--- TODO!
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS movies;
+DROP TABLE IF EXISTS actors;
+DROP TABLE IF EXISTS agents;
+DROP TABLE IF EXISTS studios;
 
 -- Create new tables, according to your domain model
--- TODO!
+CREATE TABLE studios (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT
+);
+
+CREATE TABLE movies (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT,
+  year_released INTEGER,
+  mpaa_rating TEXT,
+  studio_id INTEGER
+);
+
+CREATE TABLE agents (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT
+);
+
+CREATE TABLE actors (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  first_name TEXT,
+  last_name TEXT,
+  agent_id INTEGER
+);
+
+CREATE TABLE roles (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  movie_id INTEGER,
+  actor_id INTEGER,
+  character_name TEXT
+);
 
 -- Insert data into your database that reflects the sample data shown above
 -- Use hard-coded foreign key IDs when necessary
--- TODO!
+
+-- Studios
+INSERT INTO studios (name) VALUES ("Warner Bros.");
+
+-- Movies (studio_id = 1 for Warner Bros.)
+INSERT INTO movies (title, year_released, mpaa_rating, studio_id) VALUES ("Batman Begins", 2005, "PG-13", 1);
+INSERT INTO movies (title, year_released, mpaa_rating, studio_id) VALUES ("The Dark Knight", 2008, "PG-13", 1);
+INSERT INTO movies (title, year_released, mpaa_rating, studio_id) VALUES ("The Dark Knight Rises", 2012, "PG-13", 1);
+
+-- Agents
+INSERT INTO agents (name) VALUES ("My Agent");
+
+-- Actors (agent_id is NULL initially; we'll UPDATE one later)
+INSERT INTO actors (first_name, last_name) VALUES ("Christian", "Bale");
+INSERT INTO actors (first_name, last_name) VALUES ("Michael", "Caine");
+INSERT INTO actors (first_name, last_name) VALUES ("Liam", "Neeson");
+INSERT INTO actors (first_name, last_name) VALUES ("Katie", "Holmes");
+INSERT INTO actors (first_name, last_name) VALUES ("Gary", "Oldman");
+INSERT INTO actors (first_name, last_name) VALUES ("Heath", "Ledger");
+INSERT INTO actors (first_name, last_name) VALUES ("Aaron", "Eckhart");
+INSERT INTO actors (first_name, last_name) VALUES ("Maggie", "Gyllenhaal");
+INSERT INTO actors (first_name, last_name) VALUES ("Tom", "Hardy");
+INSERT INTO actors (first_name, last_name) VALUES ("Joseph", "Gordon-Levitt");
+INSERT INTO actors (first_name, last_name) VALUES ("Anne", "Hathaway");
+
+-- Roles (using hard-coded foreign key IDs)
+-- Batman Begins (movie_id = 1)
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (1, 1, "Bruce Wayne");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (1, 2, "Alfred");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (1, 3, "Ra's Al Ghul");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (1, 4, "Rachel Dawes");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (1, 5, "Commissioner Gordon");
+
+-- The Dark Knight (movie_id = 2)
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (2, 1, "Bruce Wayne");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (2, 6, "Joker");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (2, 7, "Harvey Dent");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (2, 2, "Alfred");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (2, 8, "Rachel Dawes");
+
+-- The Dark Knight Rises (movie_id = 3)
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (3, 1, "Bruce Wayne");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (3, 5, "Commissioner Gordon");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (3, 9, "Bane");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (3, 10, "John Blake");
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES (3, 11, "Selina Kyle");
+
+-- UPDATE: Assign agent to Christian Bale (actor_id = 1, agent_id = 1)
+UPDATE actors SET agent_id = 1 WHERE id = 1;
 
 -- Prints a header for the movies output
 .print "Movies"
 .print "======"
 .print ""
 
--- ***TODO!***
--- The SQL statement for the movies output goes here.
-
--- Example output:
--- Movies
--- ======
--- Batman Begins          2005           PG-13  Warner Bros.
--- The Dark Knight        2008           PG-13  Warner Bros.
--- The Dark Knight Rises  2012           PG-13  Warner Bros.
+-- The SQL statement for the movies output
+SELECT movies.title, movies.year_released, movies.mpaa_rating, studios.name
+FROM movies
+INNER JOIN studios ON movies.studio_id = studios.id;
 
 -- Prints a header for the cast output
 .print ""
@@ -124,27 +201,11 @@
 .print "========"
 .print ""
 
--- ***TODO!***
--- The SQL statement for the cast output goes here.
-
--- Example output:
--- Top Cast
--- ========
--- Batman Begins          Christian Bale        Bruce Wayne
--- Batman Begins          Michael Caine         Alfred
--- Batman Begins          Liam Neeson           Ra's Al Ghul
--- Batman Begins          Katie Holmes          Rachel Dawes
--- Batman Begins          Gary Oldman           Commissioner Gordon
--- The Dark Knight        Christian Bale        Bruce Wayne
--- The Dark Knight        Heath Ledger          Joker
--- The Dark Knight        Aaron Eckhart         Harvey Dent
--- The Dark Knight        Michael Caine         Alfred
--- The Dark Knight        Maggie Gyllenhaal     Rachel Dawes
--- The Dark Knight Rises  Christian Bale        Bruce Wayne
--- The Dark Knight Rises  Gary Oldman           Commissioner Gordon
--- The Dark Knight Rises  Tom Hardy             Bane
--- The Dark Knight Rises  Joseph Gordon-Levitt  John Blake
--- The Dark Knight Rises  Anne Hathaway         Selina Kyle
+-- The SQL statement for the cast output
+SELECT movies.title, actors.first_name || " " || actors.last_name, roles.character_name
+FROM roles
+INNER JOIN movies ON roles.movie_id = movies.id
+INNER JOIN actors ON roles.actor_id = actors.id;
 
 -- Prints a header for the agent's list of represented actors
 .print ""
@@ -152,10 +213,8 @@
 .print "===================="
 .print ""
 
--- ***TODO!***
--- The SQL statement for the represented actor(s) output goes here.
-
--- Example output:
--- Represented by agent
--- ====================
--- Christian Bale
+-- The SQL statement for the represented actor(s) output
+SELECT actors.first_name || " " || actors.last_name
+FROM actors
+INNER JOIN agents ON actors.agent_id = agents.id
+WHERE agents.name = "My Agent";
